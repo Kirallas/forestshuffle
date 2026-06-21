@@ -156,9 +156,14 @@ export default {
 }
 
 .action-cell {
+  box-sizing: border-box;
   min-width: 0;
 }
 
+.param-editor-row .action-cell {
+  padding-left: 3.5rem;
+}
+  
 .card-action-button {
   display: flex;
   align-items: center;
@@ -216,6 +221,10 @@ export default {
   .card-action-button {
     padding-left: 0.3rem;
     padding-right: 0.3rem;
+  }
+
+  .param-editor-row .action-cell {
+    padding-left: 2rem;
   }
 
   .card-action-label {
