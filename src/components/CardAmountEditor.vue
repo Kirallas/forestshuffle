@@ -65,11 +65,7 @@ export default {
 </script>
 
 <template>
-  <div class="card-editor-row mt-2"
-       :class="{
-         'has-count': card.count > 0,
-         'has-points': card.count > 0 && card.symbols.indexOf('butterfly') < 0
-       }">
+  <div class="card-editor-row mt-2">
     <div class="fw-bold count-cell">
       <span v-if="card.count > 0">{{ card.count }}&times;</span>
     </div>
@@ -124,46 +120,39 @@ export default {
 <style scoped>
 .card-editor-row,
 .param-editor-row {
+  --count-column: minmax(2rem, 3.5rem);
   --remove-column: 2.3rem;
+  --points-column: minmax(2rem, 3rem);
   display: grid;
   align-items: center;
   column-gap: 0.25rem;
-}
-
-.card-editor-row {
-  --count-column: 0rem;
-  --points-column: 0rem;
   grid-template-columns: var(--count-column) minmax(0, 1fr) var(--remove-column) var(--points-column);
 }
 
-.card-editor-row.has-count {
-  --count-column: minmax(2rem, 3.5rem);
+.param-count-cell {
+  grid-column: 1;
 }
 
-.card-editor-row.has-points {
-  --points-column: minmax(2rem, 3rem);
-}
-
-.param-editor-row {
-  --param-offset-column: minmax(1.4rem, 2.2rem);
-  --param-value-column: minmax(2rem, 3.5rem);
-  grid-template-columns: var(--param-offset-column) var(--param-value-column) minmax(0, 1fr) var(--remove-column);
+.count-cell,
+.param-count-cell {
+  min-width: 0;
+  text-align: end;
 }
 
 .param-count-cell {
-  grid-column: 2;
+  justify-content: flex-end;
 }
 
 .param-editor-row .action-cell {
-  grid-column: 3;
+  grid-column: 2;
 }
 
 .param-editor-row .remove-cell {
-  grid-column: 4;
+  grid-column: 3;
 }
 
 .param-editor-row .points-cell {
-  display: none;
+  grid-column: 4;
 }
 
 .action-cell {
@@ -212,35 +201,30 @@ export default {
 @media (max-width: 575.98px) {
   .card-editor-row,
   .param-editor-row {
-    --remove-column: 2.1rem;
-    column-gap: 0.2rem;
+    --count-column: 1.6rem;
+    --remove-column: 1.9rem;
+    --points-column: 1.6rem;
+    column-gap: 0.1rem;
   }
 
-  .card-editor-row.has-count {
-    --count-column: minmax(1.7rem, 2.35rem);
-  }
-
-  .card-editor-row.has-points {
-    --points-column: minmax(1.8rem, 2.6rem);
-  }
-
-  .param-editor-row {
-    --param-offset-column: minmax(0.75rem, 1.2rem);
-    --param-value-column: minmax(1.55rem, 2.1rem);
+  .count-cell,
+  .param-count-cell,
+  .points-cell {
+    font-size: 0.95rem;
   }
 
   .card-action-button {
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
   }
 
   .card-action-label {
-    margin-left: 0.35rem !important;
+    margin-left: 0.25rem !important;
     padding-left: 0 !important;
   }
 
   .remove-button {
-    width: 1.9rem;
+    width: 1.8rem;
   }
 }
 
