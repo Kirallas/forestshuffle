@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-app-cache-v1';
+const CACHE_NAME = 'my-app-cache-v2';
 const scopePath = new URL(self.registration.scope).pathname.replace(/\/$/, '');
 const withScope = (path) => `${scopePath}${path}`;
 const urlsToCache = [
@@ -18,6 +18,7 @@ const urlsToCache = [
 ].map(withScope);
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
       caches.open(CACHE_NAME)
           .then((cache) => {
@@ -33,6 +34,15 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   console.log('Service Worker activating.');
+  event.waitUntil(
+      caches.keys()
+          .then(cacheNames => Promise.all(
+              cacheNames
+                  .filter(cacheName => cacheName !== CACHE_NAME)
+                  .map(cacheName => caches.delete(cacheName))
+          ))
+          .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', event => {
