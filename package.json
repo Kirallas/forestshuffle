@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "build": "npm run bump-version && vite build",
+    "build:pages": "vite build --base=/forestshuffle/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "deploy": "gh-pages -d dist --cname forestshuffle.app",
+    "deploy": "gh-pages -d dist",
     "bump-version": "node bump-version.js",
     "dev": "vite",
     "format": "prettier --write src/",

@@ -1,4 +1,6 @@
 const CACHE_NAME = 'my-app-cache-v1';
+const scopePath = new URL(self.registration.scope).pathname.replace(/\/$/, '');
+const withScope = (path) => `${scopePath}${path}`;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -13,7 +15,7 @@ const urlsToCache = [
   '/img/points.png',
   '/img/splash.png',
   '/img/top-forest.png',
-];
+].map(withScope);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
