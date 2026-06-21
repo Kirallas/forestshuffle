@@ -6,7 +6,7 @@
       <font-awesome-icon icon="bars" class="text-light p-1 border border-light rounded-1"/>
     </div>
     <div v-if="currentPlayer"
-         class="d-flex align-items-center w-100 pe-1 gap-2 min-width-0"
+         class="player-controls d-flex align-items-center w-100 pe-1 gap-2 min-width-0"
          :class="{'card-search-active': isCardSearchVisible}">
       <div v-if="!editing" class="player-name-wrapper min-width-0 me-auto">
         <span class="current-player-text fs-1 current-player-name"
@@ -17,7 +17,7 @@
           <font-awesome-icon icon="edit" size="xs" @click="editing = true"/>
         </span>
       </div>
-      <div v-else class="d-flex min-width-0 me-auto">
+      <div v-else class="player-name-editor d-flex min-width-0 me-auto">
         <input id="playerNameInput" type="text" :value="currentPlayer.name" class="form-control"
                onfocus="this.select();"
                onclick="this.select();"
@@ -369,11 +369,25 @@ export default {
   max-width: 52vw;
 }
 
+.player-controls {
+  --score-display-width: 84px;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto var(--score-display-width);
+}
+
 .min-width-0 {
   min-width: 0;
 }
 
+.player-name-wrapper,
+.player-name-editor {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .card-search {
+  grid-column: 2;
+  grid-row: 1;
   width: clamp(9rem, 18vw, 280px);
   max-width: 100%;
 }
@@ -388,20 +402,33 @@ export default {
 }
 
 .search-toggle {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
   width: 34px;
   height: 34px;
 }
 
 .score-display {
-  min-width: 72px;
+  grid-column: 4;
+  grid-row: 1;
+  justify-self: end;
+  width: var(--score-display-width);
+  min-width: var(--score-display-width);
 }
 
 @media (max-width: 575.98px) {
+  .player-controls {
+    --score-display-width: 78px;
+    grid-template-columns: minmax(0, 1fr) auto var(--score-display-width);
+  }
+
   .card-search-active .player-name-wrapper {
     display: none;
   }
 
   .card-search {
+    grid-column: 1;
     flex: 1 1 auto;
     width: auto;
     min-width: 0;
@@ -411,8 +438,12 @@ export default {
     min-width: 0;
   }
 
+  .search-toggle {
+    grid-column: 2;
+  }
+
   .score-display {
-    min-width: 54px;
+    grid-column: 3;
   }
 }
 
