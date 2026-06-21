@@ -6,7 +6,8 @@
       <font-awesome-icon icon="bars" class="text-light p-1 border border-light rounded-1"/>
     </div>
     <div v-if="currentPlayer"
-         class="d-flex align-items-center w-100 pe-1 gap-2 min-width-0">
+         class="d-flex align-items-center w-100 pe-1 gap-2 min-width-0"
+         :class="{'card-search-active': isCardSearchVisible}">
       <div v-if="!editing" class="player-name-wrapper min-width-0 me-auto">
         <span class="current-player-text fs-1 current-player-name"
               @click="editing = true">
@@ -356,7 +357,7 @@ export default {
 
 .current-player-name {
   display: inline-block;
-  max-width: 52vw;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
@@ -365,6 +366,7 @@ export default {
 
 .player-name-wrapper {
   flex: 1 1 auto;
+  max-width: 52vw;
 }
 
 .min-width-0 {
@@ -373,6 +375,7 @@ export default {
 
 .card-search {
   width: clamp(9rem, 18vw, 280px);
+  max-width: 100%;
 }
 
 .card-search .form-control:focus {
@@ -391,6 +394,26 @@ export default {
 
 .score-display {
   min-width: 72px;
+}
+
+@media (max-width: 575.98px) {
+  .card-search-active .player-name-wrapper {
+    display: none;
+  }
+
+  .card-search {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+
+  .card-search .form-control {
+    min-width: 0;
+  }
+
+  .score-display {
+    min-width: 54px;
+  }
 }
 
 </style>
