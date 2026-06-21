@@ -161,7 +161,7 @@ export default {
 }
 
 .param-editor-row .action-cell {
-  padding-left: 3.5rem;
+  padding-left: 2.5rem;
 }
   
 .card-action-button {
@@ -224,7 +224,7 @@ export default {
   }
 
   .param-editor-row .action-cell {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
   }
 
   .card-action-label {
