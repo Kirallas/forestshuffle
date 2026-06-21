@@ -2,6 +2,7 @@
 import CardAmountEditor from "@/components/CardAmountEditor.vue";
 import {Forest} from "@/model/Forest.js";
 import {useGameStore} from "@/stores/game-store.js";
+import {cardMatchesSearch} from "@/utils/card-search.js";
 
 export default {
   name: "CardAmountEditorList",
@@ -11,7 +12,11 @@ export default {
     forest: Forest,
     symbol: String,
     symbol2: String,
-    heading: String
+    heading: String,
+    searchQuery: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     totalPoints() {
@@ -26,6 +31,8 @@ export default {
         res = res.filter(c => c.symbols.indexOf('alps') < 0)
       if (!useGameStore().woodlandEdgeExpansion)
         res = res.filter(c => (c.symbols.indexOf('woodlandEdge') < 0))
+      if (this.searchQuery.trim())
+        res = res.filter(c => cardMatchesSearch(c, this.searchQuery, key => this.$t(key)))
       return res
     }
   }
@@ -45,6 +52,7 @@ export default {
          class="d-block">
       <CardAmountEditor
           :card="card"
+          :search-query="searchQuery"
           :forest="forest">
       </CardAmountEditor>
     </div>

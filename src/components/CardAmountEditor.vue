@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useForestsStore} from "@/stores/forests-store.js";
 import {event} from "vue-gtag"
 import {useGameStore} from "@/stores/game-store.js";
+import {cardItselfMatchesSearch, normalizeCardSearchText, paramMatchesSearch} from "@/utils/card-search.js";
 
 export default {
   name: "CardAmountEditor",
@@ -10,6 +11,10 @@ export default {
   props: {
     card: Object,
     forest: Object,
+    searchQuery: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     playerName() {
@@ -17,6 +22,19 @@ export default {
     },
     distributedScoring() {
       return useGameStore().distributedScoring
+    },
+    activeCardSearch() {
+      return normalizeCardSearchText(this.searchQuery).length > 0
+    },
+    cardItselfMatchesSearch() {
+      return cardItselfMatchesSearch(this.card, this.searchQuery, key => this.$t(key))
+    },
+    visibleParams() {
+      if (!this.activeCardSearch || this.cardItselfMatchesSearch)
+        return this.card.params || []
+
+      return (this.card.params || [])
+          .filter(param => paramMatchesSearch(param, this.searchQuery, key => this.$t(key)))
     }
   },
   methods: {
@@ -67,10 +85,10 @@ export default {
       <span v-if="card.count > 0 && card.symbols.indexOf('butterfly') < 0 ">{{ card.points }}</span>
     </div>
   </div>
-  <div v-for="(param, idx) in card.params" :key="param.name">
+  <div v-for="(param, idx) in visibleParams" :key="param.name">
     <div v-if="!param.distributed || distributedScoring"
          class="mt-1 row"
-         :class="{'mb-3': card.params.length === idx+1}">
+         :class="{'mb-3': visibleParams.length === idx+1}">
       <div class="fw-bold offset-1 col-1 d-flex align-items-center">
         <span v-if="card.count > 0 && param.type === 'number'">{{ param.value }}</span>
         <span v-if="card.count > 0 && param.type === 'type'">{{ forest[param.symbol + 'Count'] }}</span>

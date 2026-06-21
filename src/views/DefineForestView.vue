@@ -1,22 +1,26 @@
 <template>
   <NavigationAndButtons @toggle-standings="toggleRankingsModal"
                         @start-new-game="startNewGame"
-                        @reset-players="resetPlayers"/>
+                        @reset-players="resetPlayers"
+                        :search-query="cardSearchQuery"
+                        @search-query-change="cardSearchQuery = $event"/>
   <div v-if="forest" class="container mb-5">
     <div class="distance-keeper position-relative"></div>
     <CardAmountEditorList :cards="trees"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="tree"
                           heading="trees">
     </CardAmountEditorList>
     <CardAmountEditorList :cards="shrubs"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="shrub"
                           heading="shrubs"
                           class="mt-4">
     </CardAmountEditorList>
 
-    <div class="d-flex align-items-center mt-4 border-primary border-bottom">
+    <div v-if="showTopSection" class="d-flex align-items-center mt-4 border-primary border-bottom">
       <div
           class="border border-2 bg-secondary text-light border-light rounded justify-content-center align-items-center d-flex me-1 position-icon">
         <font-awesome-icon icon="arrow-up"/>
@@ -26,25 +30,29 @@
     <CardAmountEditorList class="mt-1"
                           :cards="birdsTop"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="bird"
                           heading="birds"/>
     <CardAmountEditorList class="mt-4"
                           :cards="butterflies"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="butterfly"
                           heading="butterflies"/>
     <CardAmountEditorList class="mt-4"
                           :cards="others"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="pawedAnimal"
                           heading="pawedAnimals"/>
     <CardAmountEditorList class="mt-4"
                           :cards="plantsTop"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="plant"
                           heading="plants"/>
 
-    <div class="d-flex align-items-center mt-4 border-primary border-bottom">
+    <div v-if="showBottomSection" class="d-flex align-items-center mt-4 border-primary border-bottom">
       <div
           class="border border-2 bg-warning text-light border-light rounded justify-content-center align-items-center d-flex me-1 position-icon">
         <font-awesome-icon icon="arrow-down"/>
@@ -55,30 +63,35 @@
     <CardAmountEditorList class="mt-1"
                           :cards="plants"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="plant"
                           heading="plants"/>
     <CardAmountEditorList class="mt-4"
                           :cards="mushrooms"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="mushroom"
                           heading="mushrooms"/>
     <CardAmountEditorList class="mt-4"
                           :cards="amphibians"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="amphibian"
                           heading="amphibians"/>
     <CardAmountEditorList class="mt-4"
                           :cards="insectsBottom"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="insect"
                           heading="insects"/>
     <CardAmountEditorList class="mt-4"
                           :cards="pawedBottom"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="pawedAnimal"
                           heading="pawedAnimals"/>
 
-    <div class="d-flex align-items-center mt-4 border-primary border-bottom">
+    <div v-if="showSideSection" class="d-flex align-items-center mt-4 border-primary border-bottom">
       <div
           class="border border-2 bg-info text-light border-light rounded justify-content-center align-items-center d-flex me-1 position-icon">
         <font-awesome-icon icon="arrows-left-right"/>
@@ -89,26 +102,31 @@
                           class="mt-2"
                           :cards="birdsSide"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="bird"
                           heading="birds"/>
     <CardAmountEditorList class="mt-2"
                           :cards="insectsSide"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="insect"
                           heading="insects"/>
     <CardAmountEditorList class="mt-4"
                           :cards="bats"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="bat"
                           heading="bats"/>
     <CardAmountEditorList class="mt-4"
                           :cards="pawedSide"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="pawedAnimal"
                           heading="pawedAnimals"/>
     <CardAmountEditorList class="mt-4"
                           :cards="deerAndCloven"
                           :forest="forest"
+                          :search-query="cardSearchQuery"
                           symbol="deer"
                           symbol2="clovenHoofedAnimal"
                           heading="deerAndCloven"/>
@@ -186,10 +204,31 @@ import Ranking from "@/components/Ranking.vue";
 import {Modal} from "bootstrap"
 import ForestSummary from "@/components/ForestSummary.vue";
 import caves from "@/model/caves.js"
+import {cardMatchesSearch, normalizeCardSearchText} from "@/utils/card-search.js";
 
 export default {
   components: {ForestSummary, Ranking, FloatingButtons, NavigationAndButtons, CardAmountEditorList, CardAmountEditor},
+  data() {
+    return {
+      cardSearchQuery: ''
+    }
+  },
   computed: {
+    activeCardSearch() {
+      return normalizeCardSearchText(this.cardSearchQuery).length > 0
+    },
+    showTopSection() {
+      return !this.activeCardSearch
+          || this.hasCardSearchMatches(this.birdsTop, this.butterflies, this.others, this.plantsTop)
+    },
+    showBottomSection() {
+      return !this.activeCardSearch
+          || this.hasCardSearchMatches(this.plants, this.mushrooms, this.amphibians, this.insectsBottom, this.pawedBottom)
+    },
+    showSideSection() {
+      return !this.activeCardSearch
+          || this.hasCardSearchMatches(this.birdsSide, this.insectsSide, this.bats, this.pawedSide, this.deerAndCloven)
+    },
     playerName() {
       return useGameStore().currentPlayer?.name
     },
@@ -301,6 +340,20 @@ export default {
     }
   },
   methods: {
+    hasCardSearchMatches(...cardLists) {
+      const gameStore = useGameStore()
+
+      return cardLists.flat().some(card => this.cardIsVisibleInEditorList(card, gameStore)
+          && cardMatchesSearch(card, this.cardSearchQuery, key => this.$t(key)))
+    },
+    cardIsVisibleInEditorList(card, gameStore) {
+      if (!gameStore.alpineExpansion && card.symbols.indexOf('alps') >= 0)
+        return false
+      if (!gameStore.woodlandEdgeExpansion && card.symbols.indexOf('woodlandEdge') >= 0)
+        return false
+
+      return true
+    },
     setCaveCount(caveCount) {
       useForestsStore().setCaveCount(this.playerName, caveCount)
     },

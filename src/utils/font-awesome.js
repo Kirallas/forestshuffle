@@ -6,7 +6,7 @@ import {
     faCaretLeft,
     faCaretUp, faCheck,
     faCircleMinus,
-    faCirclePlus, faCross, faEdit, faListOl, faUserPlus,
+    faCirclePlus, faCross, faEdit, faListOl, faMagnifyingGlass, faUserPlus,
     faWindowClose, faXmark
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -24,6 +24,7 @@ library.add(faXmark)
 library.add(faArrowUp)
 library.add(faArrowDown)
 library.add(faArrowsLeftRight)
+library.add(faMagnifyingGlass)
 
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 

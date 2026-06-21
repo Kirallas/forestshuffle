@@ -6,9 +6,9 @@
       <font-awesome-icon icon="bars" class="text-light p-1 border border-light rounded-1"/>
     </div>
     <div v-if="currentPlayer"
-         class="d-flex justify-content-between align-items-center w-100 pe-1">
-      <div v-if="!editing">
-        <span class="current-player-text fs-1"
+         class="d-flex align-items-center w-100 pe-1 gap-2 min-width-0">
+      <div v-if="!editing" class="player-name-wrapper min-width-0 me-auto">
+        <span class="current-player-text fs-1 current-player-name"
               @click="editing = true">
           {{ currentPlayer.name }}
         </span>
@@ -16,14 +16,33 @@
           <font-awesome-icon icon="edit" size="xs" @click="editing = true"/>
         </span>
       </div>
-      <div v-else class="d-flex">
+      <div v-else class="d-flex min-width-0 me-auto">
         <input id="playerNameInput" type="text" :value="currentPlayer.name" class="form-control"
                onfocus="this.select();"
                onclick="this.select();"
                @keydown.enter="updatePlayerName"/>
         <button class="btn btn-outline-light btn-sm ms-1" @click="updatePlayerName">OK</button>
       </div>
-      <div class="current-player-text fs-1 d-flex align-items-center">
+      <div v-if="isCardSearchVisible" class="input-group input-group-sm card-search flex-shrink-0">
+        <span class="input-group-text bg-light border-light">
+          <font-awesome-icon icon="magnifying-glass"/>
+        </span>
+        <input ref="cardSearchInput"
+               type="search"
+               class="form-control"
+               :aria-label="$t('cardSearch')"
+               :placeholder="$t('cardSearchPlaceholder')"
+               :value="searchQuery"
+               @input="updateCardSearch($event.target.value)"
+               @keydown.esc="closeCardSearch"/>
+      </div>
+      <button type="button"
+              class="btn btn-outline-light btn-sm rounded-circle search-toggle flex-shrink-0"
+              :aria-label="isCardSearchVisible ? $t('clearCardSearch') : $t('cardSearch')"
+              @click="toggleCardSearch">
+        <font-awesome-icon :icon="isCardSearchVisible ? 'xmark' : 'magnifying-glass'"/>
+      </button>
+      <div class="current-player-text score-display fs-1 d-flex align-items-center justify-content-end flex-shrink-0">
         <img src="/img/points.png" alt="points" height="34"/>&nbsp;{{ points }}
       </div>
     </div>
@@ -148,13 +167,23 @@ import FloatingButtons from "@/components/FloatingButtons.vue";
 export default {
   name: "NavigationAndButtons",
   components: {FloatingButtons, FontAwesomeIcon},
-  emits: ['toggleStandings', 'startNewGame', 'resetPlayers'],
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
+  emits: ['toggleStandings', 'startNewGame', 'resetPlayers', 'searchQueryChange'],
   data() {
     return {
-      editing: false
+      editing: false,
+      cardSearchOpen: false
     }
   },
   computed: {
+    isCardSearchVisible() {
+      return this.cardSearchOpen || this.searchQuery.trim().length > 0
+    },
     distributedScoring() {
       return useGameStore().distributedScoring
     },
@@ -242,6 +271,24 @@ export default {
       this.$emit('resetPlayers')
       this.closeMenu()
     },
+    toggleCardSearch() {
+      if (this.isCardSearchVisible)
+        this.closeCardSearch()
+      else
+        this.openCardSearch()
+    },
+    openCardSearch() {
+      this.editing = false
+      this.cardSearchOpen = true
+      this.$nextTick(() => this.$refs.cardSearchInput?.focus())
+    },
+    closeCardSearch() {
+      this.updateCardSearch('')
+      this.cardSearchOpen = false
+    },
+    updateCardSearch(query) {
+      this.$emit('searchQueryChange', query)
+    },
     toggleAlpineExpansion() {
       useGameStore().toggleAlpineExpansion()
       event('alpineExpansionToggled', {newState: this.alpineExpansion})
@@ -305,6 +352,45 @@ export default {
   text-shadow: 1px 1px black;
   font-weight: bold;
   color: white;
+}
+
+.current-player-name {
+  display: inline-block;
+  max-width: 52vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.player-name-wrapper {
+  flex: 1 1 auto;
+}
+
+.min-width-0 {
+  min-width: 0;
+}
+
+.card-search {
+  width: clamp(9rem, 18vw, 280px);
+}
+
+.card-search .form-control:focus {
+  border-color: var(--bs-light);
+  box-shadow: none;
+}
+
+.card-search .input-group-text {
+  border-color: var(--bs-light);
+}
+
+.search-toggle {
+  width: 34px;
+  height: 34px;
+}
+
+.score-display {
+  min-width: 72px;
 }
 
 </style>
