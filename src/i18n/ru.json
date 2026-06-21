@@ -99,6 +99,7 @@
   "fireSalamander": "Огненная саламандра",
   "fireflies": "Светлячков",
   "woodAnt": "Муравей лесной рыжий",
+  "cardsBelowTrees": "карточек под деревом",
   "hedgehog": "Ёж",
   "mole": "Крот",
   "stagBeetle": "Рогач",
@@ -125,7 +126,7 @@
   "brownBear": "Бурый медведь",
   "europeanBadger": "Барсук",
   "europeanFatDormouse": "Соня-полчок",
-  "batOnTheOtherSide": "с летучей мышью на другой стороне",
+  "batOnTheOtherSide": "с летучей мышью на другой стороне дерева",
   "europeanHare": "Заяц-русак",
   "lynx": "Рысь",
   "raccoon": "Енот",
@@ -146,7 +147,7 @@
   "savisPipistrelle": "Кожановидный нетопырь",
   "phoebusApollo": "Аполлон Феб",
   "blackTrumpet": "Вороночник рожковидный",
-  "edelweiss": "Эдельвейс",
+  "edelweiss": "Эдельвейс альпийский",
   "blueberry": "Черника",
   "alpineNewt": "Альпийский тритон",
   "goldenEagle": "Беркут",
@@ -178,6 +179,9 @@
   "europeanPolecat": "Лесной хорёк",
   "europeanPolecatAloneOnTreeOrShrub": "один на дереве или кустарнике",
   "elkPromo": "Лось / Тролль Promo",
+  "arcticFoxSablePromo": "Песец/Соболь Promo",
   "elk": "Лось",
-  "troll": "Тролль"
+  "troll": "Тролль",
+  "arcticFox": "Песец",
+  "sable": "Соболь"
 }

@@ -31,8 +31,16 @@ export const woodAnt = {
     name: 'woodAnt',
     position: 'bottom',
     symbols: ['insect'],
-    recalculatePoints(forest) {
-        this.points = this.count * forest.countByPosition('bottom') * 2
+    params: [
+        {
+            name: 'cardsBelowTrees',
+            type: 'number',
+            value: 0,
+            unrestricted: true
+        }
+    ],
+    recalculatePoints() {
+        this.points = this.count * this.params[0].value * 2
     }
 }
 

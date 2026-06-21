@@ -16,6 +16,7 @@ export const useGameStore = defineStore('game', {
             maretakPromo: useLocalStorage("maretakPromo", false),
             spiel24Promo: useLocalStorage("spiel24Promo", false),
             elkPromo: useLocalStorage("elkPromo", false),
+            arcticFoxSablePromo: useLocalStorage("arcticFoxSablePromo", false),
             startTime: new Date()
         }
     },
@@ -59,6 +60,9 @@ export const useGameStore = defineStore('game', {
         },
         toggleElkPromo() {
             this.elkPromo = !this.elkPromo
+        },
+        toggleArcticFoxSablePromo() {
+            this.arcticFoxSablePromo = !this.arcticFoxSablePromo
         },
         toggleDistributedScoring() {
             this.distributedScoring = !this.distributedScoring

@@ -124,6 +124,13 @@
           {{ $t('elkPromo') }}
         </div>
       </div>
+      <div class="d-flex mt-2 w-100 justify-content-start align-items-center px-3 small">
+        <input class="form-check form-check-input bg-secondary" type="checkbox" :checked="arcticFoxSablePromo"
+               @input="toggleArcticFoxSablePromo"/>
+        <div class="form-check-label ms-2 user-select-none text-wrap" @click="toggleArcticFoxSablePromo">
+          {{ $t('arcticFoxSablePromo') }}
+        </div>
+      </div>
     </div>
   </div>
   <FloatingButtons @add-player="addPlayer"
@@ -174,6 +181,9 @@ export default {
     },
     elkPromo(){
       return useGameStore().elkPromo
+    },
+    arcticFoxSablePromo(){
+      return useGameStore().arcticFoxSablePromo
     },
     forests() {
       return useForestsStore().forests
@@ -263,6 +273,10 @@ export default {
     toggleElkPromo() {
       useGameStore().toggleElkPromo()
       event('elkToggled', {newState: this.elkPromo})
+    },
+    toggleArcticFoxSablePromo() {
+      useGameStore().toggleArcticFoxSablePromo()
+      event('arcticFoxSablePromoToggled', {newState: this.arcticFoxSablePromo})
     },
     changeLanguage(newLang) {
       this.$i18n.locale = newLang

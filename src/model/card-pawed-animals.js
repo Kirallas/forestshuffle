@@ -211,7 +211,7 @@ export const arcticFox = {
     name: 'arcticFox',
     position: 'side',
     symbols: ['pawedAnimal'],
-    hide: (gameStore) => !gameStore.explorationExpansion,
+    hide: (gameStore) => !gameStore.arcticFoxSablePromo && !gameStore.explorationExpansion,
     recalculatePoints(forest) {
         this.points = this.count * 2 * numberOfHare(forest)
     }
@@ -221,7 +221,7 @@ export const sable = {
     name: 'sable',
     position: 'side',
     symbols: ['pawedAnimal'],
-    hide: (gameStore) => !gameStore.explorationExpansion,
+    hide: (gameStore) => !gameStore.arcticFoxSablePromo && !gameStore.explorationExpansion,
     recalculatePoints(forest) {
         this.points = this.count * 3 * forest.countBySymbol('pawedAnimal')
     }
