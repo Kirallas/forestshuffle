@@ -65,31 +65,37 @@ export default {
 </script>
 
 <template>
-  <div class="row mt-2">
-    <div class="fw-bold col-1">
+  <div class="card-editor-row mt-2"
+       :class="{
+         'has-count': card.count > 0,
+         'has-points': card.count > 0 && card.symbols.indexOf('butterfly') < 0
+       }">
+    <div class="fw-bold count-cell">
       <span v-if="card.count > 0">{{ card.count }}&times;</span>
     </div>
-    <div class="col pe-0 text-nowrap overflow-x-hidden">
-      <button @click="addCard" :class="'btn-' + card.symbols[0]" class="w-100 btn btn-primary btn-sm text-start">
+    <div class="action-cell">
+      <button @click="addCard"
+              :class="'btn-' + card.symbols[0]"
+              class="card-action-button w-100 btn btn-primary btn-sm text-start">
         <img v-for="(symbol, idx) in card.symbols" :src="'./img/symbols/' + symbol + '.png'" height="20"
              :class="{'ms-1': idx > 0}"/>
         <img v-if="card.name.startsWith('roe')" :src="'./img/symbols/' + card.type + '.png'" height="20"
              class="ms-1"/>
-        <span class="ms-2">{{ $t(card.name) }}</span>
+        <span class="card-action-label ms-2">{{ $t(card.name) }}</span>
       </button>
     </div>
-    <div class="col-1 ps-0 pe-0">
-      <button class="ms-1 btn btn-outline-danger btn-sm" @click="removeCard">&times;</button>
+    <div class="remove-cell">
+      <button class="remove-button btn btn-outline-danger btn-sm" @click="removeCard">&times;</button>
     </div>
-    <div class="col-1 ps-1 text-start text-nowrap">
+    <div class="points-cell text-start text-nowrap">
       <span v-if="card.count > 0 && card.symbols.indexOf('butterfly') < 0 ">{{ card.points }}</span>
     </div>
   </div>
   <div v-for="(param, idx) in visibleParams" :key="param.name">
     <div v-if="!param.distributed || distributedScoring"
-         class="mt-1 row"
+         class="param-editor-row mt-1"
          :class="{'mb-3': visibleParams.length === idx+1}">
-      <div class="fw-bold offset-1 col-1 d-flex align-items-center">
+      <div class="fw-bold param-count-cell d-flex align-items-center">
         <span v-if="card.count > 0 && param.type === 'number'">{{ param.value }}</span>
         <span v-if="card.count > 0 && param.type === 'type'">{{ forest[param.symbol + 'Count'] }}</span>
         <span v-if="card.count > 0 && param.type === 'boolean'">
@@ -97,25 +103,147 @@ export default {
          <span v-else class="text-danger"><font-awesome-icon icon="xmark" size="lg"/></span>
         </span>
       </div>
-      <div class="col text-nowrap pe-0">
+      <div class="action-cell">
         <button @click="paramAdd(param)" :class="'btn-' + card.symbols[0]"
-                class="btn btn-sm btn-primary text-start w-100">
+                class="card-action-button btn btn-sm btn-primary text-start w-100">
           <img v-if="param.type === 'type'" :src="'./img/symbols/' + param.symbol + '.png'" :alt="$t(param.symbol)"
                height="20"/>
-          <span class="ps-2">{{ $t(param.name) }}</span>
+          <span class="card-action-label ps-2">{{ $t(param.name) }}</span>
         </button>
       </div>
-      <div class="col-1 ps-0 pe-0">
-        <button v-if="param.type !== 'boolean'" class="ms-1 btn btn-outline-danger btn-sm" @click="paramSub(param)">
+      <div class="remove-cell">
+        <button v-if="param.type !== 'boolean'" class="remove-button btn btn-outline-danger btn-sm" @click="paramSub(param)">
           &times;
         </button>
       </div>
-      <div class="col-1 ps-1"></div>
+      <div class="points-cell"></div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.card-editor-row,
+.param-editor-row {
+  --remove-column: 2.3rem;
+  display: grid;
+  align-items: center;
+  column-gap: 0.25rem;
+}
+
+.card-editor-row {
+  --count-column: 0rem;
+  --points-column: 0rem;
+  grid-template-columns: var(--count-column) minmax(0, 1fr) var(--remove-column) var(--points-column);
+}
+
+.card-editor-row.has-count {
+  --count-column: minmax(2rem, 3.5rem);
+}
+
+.card-editor-row.has-points {
+  --points-column: minmax(2rem, 3rem);
+}
+
+.param-editor-row {
+  --param-offset-column: minmax(1.4rem, 2.2rem);
+  --param-value-column: minmax(2rem, 3.5rem);
+  grid-template-columns: var(--param-offset-column) var(--param-value-column) minmax(0, 1fr) var(--remove-column);
+}
+
+.param-count-cell {
+  grid-column: 2;
+}
+
+.param-editor-row .action-cell {
+  grid-column: 3;
+}
+
+.param-editor-row .remove-cell {
+  grid-column: 4;
+}
+
+.param-editor-row .points-cell {
+  display: none;
+}
+
+.action-cell {
+  min-width: 0;
+}
+
+.card-action-button {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
+  white-space: nowrap;
+}
+
+.card-action-button img {
+  flex: 0 0 auto;
+}
+
+.card-action-label {
+  display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+.remove-cell {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.remove-button {
+  width: 2rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.points-cell {
+  min-width: 0;
+}
+
+@media (max-width: 575.98px) {
+  .card-editor-row,
+  .param-editor-row {
+    --remove-column: 2.1rem;
+    column-gap: 0.2rem;
+  }
+
+  .card-editor-row.has-count {
+    --count-column: minmax(1.7rem, 2.35rem);
+  }
+
+  .card-editor-row.has-points {
+    --points-column: minmax(1.8rem, 2.6rem);
+  }
+
+  .param-editor-row {
+    --param-offset-column: minmax(0.75rem, 1.2rem);
+    --param-value-column: minmax(1.55rem, 2.1rem);
+  }
+
+  .card-action-button {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+  }
+
+  .card-action-label {
+    margin-left: 0.35rem !important;
+    padding-left: 0 !important;
+  }
+
+  .remove-button {
+    width: 1.9rem;
+  }
+}
+
 .btn-amphibian {
   background-color: #9d8683;
 }
